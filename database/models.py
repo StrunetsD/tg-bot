@@ -1,11 +1,12 @@
 import enum
+import asyncio
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Enum
-from sqlalchemy.ext.asyncio import AsyncAttrs
+from sqlalchemy.ext.asyncio import AsyncAttrs,create_async_engine
 from sqlalchemy.orm import DeclarativeBase, relationship, declarative_base
 from config import *
 
 DATABASE_URL = str(DATABASE_URL)
-engine = engine = create_engine(DATABASE_URL)
+engine = create_async_engine(DATABASE_URL, echo=True)
 Base = declarative_base()
 
 
@@ -64,3 +65,11 @@ class PlaylistMusic(Base):
     music_id = Column(Integer, ForeignKey('music.id'))
     playlist = relationship('Playlist', back_populates='music')
     music = relationship('Music', back_populates='playlists')
+
+async def main():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    print("Таблицы успешно созданы!")
+
+if __name__ == "__main__":
+    asyncio.run(main())
