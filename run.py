@@ -1,23 +1,23 @@
 import asyncio
-import os
+import logging
 from aiogram import Bot, Dispatcher
-from aiogram.filters import CommandStart
-from aiogram.types import Message
 from dotenv import load_dotenv
+from config import API_TOKEN
+from app.handlers import router
 
 load_dotenv()
-bot = Bot(token=str(os.getenv('TOKEN')))
+
+bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
 
-@dp.message(CommandStart())
-async def start(message: Message):
-    await message.answer("Hello")
 
 async def main():
+    dp.include_router(router)
     await dp.start_polling(bot)
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
