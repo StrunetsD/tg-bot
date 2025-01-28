@@ -2,7 +2,7 @@ import enum
 import asyncio
 from sqlalchemy import Column, Integer, String, ForeignKey, Enum
 from sqlalchemy.ext.asyncio import AsyncAttrs, create_async_engine,async_sessionmaker
-from sqlalchemy.orm import DeclarativeBase, relationship, declarative_base
+from sqlalchemy.orm import DeclarativeBase, relationship
 from config import *
 
 DATABASE_URL = str(DATABASE_URL)
@@ -69,6 +69,7 @@ class PlaylistMusic(Base):
 
 
 async def main():
+    await asyncio.sleep(5)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     print("Таблицы успешно созданы!")
