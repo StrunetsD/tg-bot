@@ -1,5 +1,5 @@
 from .models import async_session
-from .models import User, UserRole, Music, Playlist, PlaylistMusic
+from .models import User, UserRole, UserQuery, FailedRequest
 from sqlalchemy import select, update, delete
 
 
@@ -14,3 +14,27 @@ async def set_user(id, username ):
                 session.add(new_user)
                 await session.commit()
                 print(f"Пользователь {username} добавлен в базу данных.")
+
+
+async def add_user_query(user_id,username, query):
+    async with async_session() as session:
+        user = await session.scalar(select(User).where(User.id == user_id))
+
+        if user:
+            new_request = UserQuery(user_id=user_id, username=username, query=query)
+            session.add(new_request)
+            await session.commit()
+        else:
+            raise ValueError("User not found")
+
+
+async def add_failed_user_query(user_id, username, query):
+    async with async_session() as session:
+        user = await session.scalar(select(User).where(User.id == user_id))
+
+        if user:
+            failed_request = FailedRequest(user_id=user_id,username=username, query=query)
+            session.add(failed_request)
+            await session.commit()
+        else:
+            raise ValueError("User not found")

@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer, String, Enum, DateTime, ForeignKey
 from sqlalchemy.ext.asyncio import AsyncAttrs, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, relationship
 
-from config import *
+from core.config import *
 
 DATABASE_URL = str(DATABASE_URL)
 engine = create_async_engine(DATABASE_URL, echo=True)
@@ -21,6 +21,7 @@ class UserRole(enum.Enum):
     user = "user"
     superuser = "superuser"
     admin = "admin"
+    block = "block"
 
 
 class User(Base):
@@ -30,10 +31,11 @@ class User(Base):
     username = Column(String, unique=True, nullable=False)
     chat_id = Column(Integer, unique=True, nullable=False)
     role = Column(Enum(UserRole), default=UserRole.user)
-    queries = relationship('UserQuery', back_populates='user')
+    queries = relationship('UserQuery', back_populates='user', cascade='all, delete-orphan')
+    failed_requests = relationship('FailedRequest', back_populates='user', cascade='all, delete-orphan')
 
     def __str__(self):
-        return F"<{self.username}>"
+        return f"<{self.username}>"
 
 
 class UserQuery(Base):
@@ -41,12 +43,13 @@ class UserQuery(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey('users.id'), index=True)
+    username = Column(String, nullable=False)  # Сохраняем username
     query = Column(String, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
     user = relationship('User', back_populates='queries')
 
     def __str__(self):
-        return f"<{self.user_id}, {self.query}, {self.timestamp}>"
+        return f"<{self.user_id}, {self.username}, {self.query}, {self.timestamp}>"
 
 
 class FailedRequest(Base):
@@ -54,13 +57,13 @@ class FailedRequest(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey('users.id'), index=True)
+    username = Column(String, nullable=False)  # Сохраняем username
     query = Column(String, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
-    user = relationship('User', back_populates='queries')
+    user = relationship('User', back_populates='failed_requests')
 
     def __str__(self):
-        return f"<{self.user_id}, {self.query}, {self.timestamp}>"
-
+        return f"<{self.user_id}, {self.username}, {self.query}, {self.timestamp}>"
 
 
 async def main():
