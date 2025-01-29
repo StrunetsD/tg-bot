@@ -1,5 +1,5 @@
 import os
-from pathlib import Path
+from core.config import TRACKS_PATH
 
 from dotenv import load_dotenv
 from spotdl import DownloaderOptions, Song
@@ -28,7 +28,7 @@ class Spotify:
             bundle_settings.update(settings)
 
         bundle_settings['simple_tui'] = True
-        bundle_settings['output'] = str(os.getenv('TRACKS_PATH'))
+        bundle_settings['output'] = str(TRACKS_PATH)
 
         self.downloader = Downloader(settings=bundle_settings)
 
