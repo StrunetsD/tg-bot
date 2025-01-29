@@ -1,14 +1,16 @@
-import enum
 import asyncio
-from sqlalchemy import Column, Integer, String, ForeignKey, Enum
-from sqlalchemy.ext.asyncio import AsyncAttrs, create_async_engine,async_sessionmaker
+import enum
+from datetime import datetime
+
+from sqlalchemy import Column, Integer, String, Enum, DateTime, ForeignKey
+from sqlalchemy.ext.asyncio import AsyncAttrs, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, relationship
+
 from config import *
 
 DATABASE_URL = str(DATABASE_URL)
 engine = create_async_engine(DATABASE_URL, echo=True)
 async_session = async_sessionmaker(engine)
-
 
 
 class Base(DeclarativeBase, AsyncAttrs):
@@ -17,55 +19,48 @@ class Base(DeclarativeBase, AsyncAttrs):
 
 class UserRole(enum.Enum):
     user = "user"
+    superuser = "superuser"
     admin = "admin"
 
 
 class User(Base):
     __tablename__ = 'users'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    username: str = Column(String, unique=True, nullable=False)
+    id = Column(Integer, primary_key=True)
+    username = Column(String, unique=True, nullable=False)
     chat_id = Column(Integer, unique=True, nullable=False)
     role = Column(Enum(UserRole), default=UserRole.user)
-    playlists = relationship('Playlist', back_populates='user')
+    queries = relationship('UserQuery', back_populates='user')
 
     def __str__(self):
-        return self.username
+        return F"<{self.username}>"
 
 
-class Music(Base):
-    __tablename__ = 'music'
+class UserQuery(Base):
+    __tablename__ = 'user_queries'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    title = Column(String, nullable=False)
-    file_path = Column(String, nullable=False)
-    playlists = relationship('PlaylistMusic', back_populates='music')
+    user_id = Column(Integer, ForeignKey('users.id'), index=True)
+    query = Column(String, nullable=False)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+    user = relationship('User', back_populates='queries')
 
     def __str__(self):
-        return self.title
+        return f"<{self.user_id}, {self.query}, {self.timestamp}>"
 
 
-class Playlist(Base):
-    __tablename__ = 'playlists'
+class FailedRequest(Base):
+    __tablename__ = 'failed_requests'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    user = relationship('User', back_populates='playlists')
-    music = relationship('PlaylistMusic', back_populates='playlist')
+    user_id = Column(Integer, ForeignKey('users.id'), index=True)
+    query = Column(String, nullable=False)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+    user = relationship('User', back_populates='queries')
 
     def __str__(self):
-        return self.name
+        return f"<{self.user_id}, {self.query}, {self.timestamp}>"
 
-
-class PlaylistMusic(Base):
-    __tablename__ = 'playlist_music'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    playlist_id = Column(Integer, ForeignKey('playlists.id'))
-    music_id = Column(Integer, ForeignKey('music.id'))
-    playlist = relationship('Playlist', back_populates='music')
-    music = relationship('Music', back_populates='playlists')
 
 
 async def main():
