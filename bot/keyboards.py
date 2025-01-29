@@ -1,6 +1,6 @@
 from aiogram.utils.keyboard import (InlineKeyboardBuilder, InlineKeyboardButton)
 
-commands = ['Скачать трек', 'Плейлист', 'Создать плейлист', 'Добавить трек в плейлист', 'Новинки', 'Популярное']
+commands = ['Скачать трек', 'Новинки', 'Популярное']
 
 
 async def start_commands():
