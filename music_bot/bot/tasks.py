@@ -2,7 +2,7 @@ import asyncio
 import os
 import time
 
-from .config import TRACKS_PATH
+from core.config import TRACKS_PATH
 
 
 async def check_downloaded_track_ages():

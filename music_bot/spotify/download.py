@@ -1,11 +1,12 @@
+import asyncio
+
 from aiogram import Bot
 from aiogram.enums import ChatAction
 from aiogram.exceptions import TelegramRetryAfter
 from aiogram.types import Chat, FSInputFile, Message
 from spotdl import Song
-from spotify.spotify_client import spotify
-import asyncio
 
+from .spotify_client import spotify
 
 
 async def download_and_send_song(bot: Bot, chat: Chat, message: Message, song: Song):

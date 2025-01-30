@@ -4,21 +4,22 @@ from aiogram import Bot, Dispatcher
 from aiogram import F
 from aiogram.enums import ChatAction
 from aiogram.filters import Command
+from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.types import CallbackQuery, Chat, Message
 from spotipy.exceptions import SpotifyException
-from aiogram.fsm.storage.redis import RedisStorage
-from middleware.throttling_middleware import ThrottlingMiddleware
+from database import db_requests as rq
+from . import keyboards as kb
+from core.config import API_TOKEN, REDIS_URL
+from music_bot.spotify import download
+from music_bot.middleware.throttling_middleware import ThrottlingMiddleware
+from music_bot.spotify.spotify_client import spotify
 
-import bot.keyboards as kb
-import database.requests as rq
-from core.config import API_TOKEN
-from spotify.spotify_client import spotify
-from .download import download_and_send_song
 
-storage = RedisStorage.from_url('redis://localhost:6379/0')
+storage = RedisStorage.from_url(REDIS_URL)
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(storage=storage)
 dp.message.middleware.register(ThrottlingMiddleware(storage=storage))
+
 
 @dp.message(Command("start"))
 async def send_welcome(message: Message):
@@ -76,7 +77,7 @@ async def message_handler(message: Message, event_chat: Chat):
 
     await asyncio.gather(
         *[
-            download_and_send_song(
+            download.download_and_send_song(
                 bot=bot,
                 chat=event_chat,
                 message=message,

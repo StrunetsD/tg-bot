@@ -1,12 +1,10 @@
-import os
-from core.config import TRACKS_PATH
-
 from dotenv import load_dotenv
 from spotdl import DownloaderOptions, Song
 from spotdl.utils.config import DOWNLOADER_OPTIONS
 from spotdl.utils.search import parse_query
 from spotdl.utils.spotify import SpotifyClient
 
+from core.config import TRACKS_PATH
 from .downloader import Downloader
 
 load_dotenv()
@@ -21,7 +19,7 @@ class Spotify:
     ):
         SpotifyClient.init(client_id=client_id, client_secret=client_secret)
 
-        #обновление настроек загрузчика
+        # обновление настроек загрузчика
         bundle_settings: DownloaderOptions = DOWNLOADER_OPTIONS.copy()
 
         if settings:
