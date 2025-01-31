@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template, redirect, request, url_for, session
+from flask import render_template, redirect, request, url_for, session, flash
 from flask_admin import AdminIndexView, expose
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
@@ -17,7 +17,6 @@ db = SQLAlchemy(app)
 
 @app.before_request
 def require_admin_login():
-    session.pop("admin_logged_in", None)
     if request.path.startswith('/admin') and request.endpoint != 'login_admin' and not session.get("admin_logged_in"):
         return redirect(url_for("login_admin"))
 
@@ -48,13 +47,11 @@ class HomeView(AdminIndexView):
 
 @app.route("/", methods=['GET'])
 def index():
-    session.pop("admin_logged_in", None)
     return redirect(url_for("login_admin"))
 
 
 @app.route('/login_admin', methods=['GET', 'POST'])
 def login_admin():
-    session.pop("admin_logged_in", None)
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -62,5 +59,6 @@ def login_admin():
         if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
             session["admin_logged_in"] = True
             return redirect(url_for("admin.index"))
+
 
     return render_template("login_admin.html")
