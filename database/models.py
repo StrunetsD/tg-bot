@@ -8,7 +8,7 @@ from sqlalchemy.orm import DeclarativeBase, relationship
 
 from core.config import *
 
-DATABASE_URL = str(DATABASE_URL)
+DATABASE_URL = str(ASYNC_DATABASE_URL)
 engine = create_async_engine(DATABASE_URL, echo=True)
 async_session = async_sessionmaker(engine)
 
