@@ -4,8 +4,11 @@ from spotdl.utils.config import DOWNLOADER_OPTIONS
 from spotdl.utils.search import parse_query
 from spotdl.utils.spotify import SpotifyClient
 
+
+
 from core.config import TRACKS_PATH
 from .downloader import Downloader
+
 
 load_dotenv()
 
@@ -30,7 +33,7 @@ class Spotify:
 
         self.downloader = Downloader(settings=bundle_settings)
 
-    async def search(self, query: list[str]) -> list[Song]:
+    async def search(self, query):
         return parse_query(
             query=query,
             threads=self.downloader.settings['threads'],
@@ -41,6 +44,7 @@ class Spotify:
                 'playlist_retain_track_cover'
             ],
         )
+
 
     async def download(self, song: Song):
         song, path = await self.downloader.download_song(song=song)

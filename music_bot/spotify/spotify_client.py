@@ -1,13 +1,12 @@
 import os
 
 from dotenv import load_dotenv
-
+from core.config import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET
 from .spotify import Spotify
 
 load_dotenv()
 
-SPOTIFY_CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID')
-SPOTIFY_CLIENT_SECRET = os.getenv('SPOTIFY_CLIENT_SECRET')
+
 
 spotify = Spotify(
     client_id=SPOTIFY_CLIENT_ID,
