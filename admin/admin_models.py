@@ -7,6 +7,7 @@ class UserAdmin(ModelView):
     column_filters = ['role']
     column_searchable_list = ['username', 'chat_id']
     column_editable_list = ['role']
+    can_edit = True
     can_delete = True
     can_create = False
 
