@@ -1,0 +1,62 @@
+services:
+  db:
+    container_name: db
+    image: postgres:latest
+    ports:
+      - 5433:5432
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+  bot:
+    container_name: bot
+    build:
+      context: .
+      dockerfile: music_bot/Dockerfile
+    volumes:
+      - .:/tg-bot
+    environment:
+      - REDIS_URL=${REDIS_URL}
+      - PYTHONPATH=/tg-bot
+      - DATABASE_URL=${ASYNC_DATABASE_URL}
+    depends_on:
+      - db
+  admin:
+    container_name: admin
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: admin/Dockerfile
+    ports:
+      - 5000:5000
+    volumes:
+      - admin_data:/var/lib/admin/data
+    environment:
+      - DATABASE_URL=${SYNC_DATABASE_URL}
+    depends_on:
+      - db
+      - redis
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - "6377:6379"
+    volumes:
+      - redis_data:/data
+  redisinsight:
+    container_name: redisinsight
+    image: redislabs/redisinsight:latest
+    ports:
+      - "8001:8001"
+    volumes:
+      - redisinsight_data:/db
+    depends_on:
+      - redis
+volumes:
+  db_data:
+  admin_data:
+  redis_data:
+  redisinsight_data:
