@@ -1,8 +1,9 @@
-import asyncio
 import enum
 from datetime import datetime
 
 from sqlalchemy import Column, Integer, String, Enum, DateTime, ForeignKey
+from sqlalchemy import text
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.asyncio import AsyncAttrs, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, relationship
 
@@ -66,12 +67,15 @@ class FailedRequest(Base):
         return f"<{self.user_id}, {self.username}, {self.query}, {self.timestamp}>"
 
 
-async def main():
-    await asyncio.sleep(5)
+async def check_database_exists():
+    async with engine.connect() as conn:
+        try:
+            await conn.execute(text("SELECT 1"))
+            return True
+        except OperationalError:
+            return False
+
+
+async def create_tables():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    print("Таблицы успешно созданы!")
-
-
-if __name__ == "__main__":
-    asyncio.run(main())

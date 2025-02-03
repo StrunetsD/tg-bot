@@ -1,5 +1,5 @@
 import asyncio
-from aiogram import types
+
 from aiogram import Bot, Dispatcher
 from aiogram import F
 from aiogram.enums import ChatAction
@@ -7,8 +7,8 @@ from aiogram.filters import Command
 from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.types import CallbackQuery, Chat, Message
 from spotipy.exceptions import SpotifyException
-from music_bot.spotify.get_popular_tracks import search_playlist_tracks
-from core.config import API_TOKEN, REDIS_URL
+
+from core.config import REDIS_URL,API_TOKEN
 from database import db_requests as rq
 from music_bot.middleware.throttling_middleware import ThrottlingMiddleware
 from music_bot.spotify import download
@@ -31,6 +31,7 @@ async def send_welcome(message: Message):
         text="Выберите действие:",
         reply_markup=await kb.start_commands()
     )
+
 
 # @dp.callback_query(F.data == 'Новинки')  # Или другой триггер для вызова
 # async def popular_tracks(callback: types.CallbackQuery):

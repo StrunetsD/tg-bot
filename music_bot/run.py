@@ -1,7 +1,7 @@
 import logging
 
-from music_bot.bot.handlers import *
-from music_bot.bot.tasks import run_tasks
+from bot.handlers import *
+from bot.tasks import run_tasks
 
 
 async def main():

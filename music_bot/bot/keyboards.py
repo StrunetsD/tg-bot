@@ -2,7 +2,7 @@ from aiogram.utils.keyboard import (InlineKeyboardBuilder, InlineKeyboardButton)
 from music_bot.spotify.get_popular_tracks import search_playlist_tracks
 from urllib.parse import quote
 
-commands = ['Скачать трек', 'Новинки', 'Популярное']
+commands = ['Скачать трек']
 
 
 async def start_commands():
