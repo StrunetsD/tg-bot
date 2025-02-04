@@ -4,11 +4,8 @@ from spotdl.utils.config import DOWNLOADER_OPTIONS
 from spotdl.utils.search import parse_query
 from spotdl.utils.spotify import SpotifyClient
 
-
-
 from core.config import TRACKS_PATH
 from .downloader import Downloader
-
 
 load_dotenv()
 
@@ -44,7 +41,6 @@ class Spotify:
                 'playlist_retain_track_cover'
             ],
         )
-
 
     async def download(self, song: Song):
         song, path = await self.downloader.download_song(song=song)

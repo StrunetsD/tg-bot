@@ -14,7 +14,6 @@ async def check_downloaded_track_ages():
             if track_age > 3600:
                 os.remove(track_path)
 
-
         await asyncio.sleep(10)
 
 

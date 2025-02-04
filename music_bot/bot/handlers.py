@@ -8,7 +8,7 @@ from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.types import CallbackQuery, Chat, Message
 from spotipy.exceptions import SpotifyException
 
-from core.config import REDIS_URL,API_TOKEN
+from core.config import REDIS_URL, API_TOKEN
 from database import db_requests as rq
 from music_bot.middleware.throttling_middleware import ThrottlingMiddleware
 from music_bot.spotify import download
@@ -32,15 +32,6 @@ async def send_welcome(message: Message):
         reply_markup=await kb.start_commands()
     )
 
-
-# @dp.callback_query(F.data == 'Новинки')  # Или другой триггер для вызова
-# async def popular_tracks(callback: types.CallbackQuery):
-#     await callback.answer()  # Подтверждаем колбэк
-#     keyboard = await kb.playlist_command()  # Получаем клавиатуру с треками
-#     await callback.message.answer(
-#         text="Выберите трек:",
-#         reply_markup=keyboard  # Отправляем клавиатуру
-#     )
 
 @dp.callback_query(F.data == 'Скачать трек')
 async def download_music(callback: CallbackQuery):

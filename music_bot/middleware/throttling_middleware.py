@@ -1,8 +1,8 @@
+from typing import Callable, Dict, Any, Awaitable
+
 from aiogram import BaseMiddleware
 from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.types import TelegramObject, Message
-from typing import Callable, Dict, Any, Awaitable
-import time
 
 
 class ThrottlingMiddleware(BaseMiddleware):

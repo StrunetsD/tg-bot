@@ -1,7 +1,6 @@
 import pytest
-from flask import session
-from admin.views import *
 
+from admin.views import *
 
 
 @pytest.fixture
@@ -17,7 +16,6 @@ def client():
 def test_login_admin(client):
     response = client.get('/login_admin')
     assert response.status_code == 200
-
 
 
 def test_failed_login(client):
