@@ -41,7 +41,7 @@ If you prefer to run the bot without Docker, you can follow these steps:
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/StrunetsD/tg-bot.git
+    git clone git@github.com:StrunetsD/tg-bot.git
     cd tg-bot
     ```
 
