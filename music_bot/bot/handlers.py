@@ -10,6 +10,7 @@ from spotipy.exceptions import SpotifyException
 
 from core.config import REDIS_URL, API_TOKEN
 from database import db_requests as rq
+from database.models import UserRole
 from music_bot.middleware.throttling_middleware import ThrottlingMiddleware
 from music_bot.spotify import download
 from music_bot.spotify.spotify_client import spotify
@@ -44,6 +45,15 @@ async def download_music(callback: CallbackQuery):
 @dp.message(F.text)
 async def message_handler(message: Message, event_chat: Chat):
     user_id = message.from_user.id
+    try:
+        user_role = await rq.get_user_role(user_id)
+    except ValueError:
+        await message.reply("Пользователь не найден.")
+        return
+
+    if user_role == UserRole.block:
+        await message.reply("Вы заблокированы и не можете отправлять сообщения.")
+        return
     waiting_state = await storage.redis.get(f"waiting_for_track:{user_id}")
 
     if waiting_state is None:

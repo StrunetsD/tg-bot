@@ -38,3 +38,12 @@ async def add_failed_user_query(user_id, username, query):
             await session.commit()
         else:
             raise ValueError("User not found")
+
+
+async def get_user_role(user_id):
+    async with async_session() as session:
+        user = await session.scalar(select(User).where(User.id == user_id))
+        if user:
+            return user.role
+        else:
+            raise ValueError("User not found")
