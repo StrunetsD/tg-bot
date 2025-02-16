@@ -18,11 +18,7 @@ async def main():
     db_exists = await check_database_exists()
 
     if not db_exists:
-        print("База данных не существует. Создание таблиц...")
         await create_tables()
-        print("Таблицы успешно созданы!")
-    else:
-        print("База данных уже существует. Таблицы не будут созданы.")
 
     app.run(host='0.0.0.0', port=5000)
 

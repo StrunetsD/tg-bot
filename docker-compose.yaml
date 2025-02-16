@@ -6,10 +6,17 @@ services:
       - 5433:5432
     volumes:
       - db_data:/var/lib/postgresql/data
+      - ./logs/db:/var/log/postgresql
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   bot:
     container_name: bot
     build:
@@ -17,12 +24,19 @@ services:
       dockerfile: music_bot/Dockerfile
     volumes:
       - .:/tg-bot
+      - ./logs/bot:/var/log/bot
     environment:
       - REDIS_URL=${REDIS_URL}
       - PYTHONPATH=/tg-bot
       - DATABASE_URL=${ASYNC_DATABASE_URL}
     depends_on:
       - db
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   admin:
     container_name: admin
     env_file:
@@ -34,11 +48,18 @@ services:
       - 5000:5000
     volumes:
       - admin_data:/var/lib/admin/data
+      - ./logs/admin:/var/log/admin
     environment:
       - DATABASE_URL=${SYNC_DATABASE_URL}
     depends_on:
       - db
       - redis
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   redis:
     container_name: redis
     image: redis:latest
@@ -46,6 +67,12 @@ services:
       - "6377:6379"
     volumes:
       - redis_data:/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   redisinsight:
     container_name: redisinsight
     image: redislabs/redisinsight:latest
@@ -55,6 +82,12 @@ services:
       - redisinsight_data:/db
     depends_on:
       - redis
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
 volumes:
   db_data:
   admin_data:
